@@ -39,13 +39,13 @@ through the following steps:
 
 1. Logs in to the API at the specified URL
 2. Gets the definition of a saved query from the `/{dataViewName}/Queries/{systemName}/GetFileSync` endpoint.
-3. Gets the resolve table for the query and looks up the reference (URN) variable for this table. The endpoint used is
-`/{dataViewName}/FastStatsSystems/{systemName}/Variables` with a filter applied. 
-4. If there is a reference variable found this is added to the list of variables the user provided on the command line.
-5. Creates a set of export column definitions from the list of variable names provided on the command line.
-6. Submits an export request with the given query and list of columns.  The endpoint used is
-`/{dataViewName}/Exports/{systemName}/ExportSync` 
-7. Outputs the resulting rows to the console.
+3. Checks the given variable names are all selector variables, as these can be added to cubes without further
+processing.  Other variable types can be added as cube dimensions, but require bandings or other types of cubes.
+4. Creates a set of cube dimensions from the given variables and a single count measure (although cubes can process
+multiple measures if they are specified).
+5. Submits a cube request with the given query and list of dimensions and measurse.  The endpoint used is
+`/{dataViewName}/Cubes/{systemName}/CalculateSync` 
+6. Formats the resulting n-dimensional cube as a series of 2-dimensional tables and outputs them to the console.
 
 ### Implementation
 * To see how the ApiClient code was generated from the API's Swagger specification, look at the

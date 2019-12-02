@@ -106,6 +106,7 @@ namespace Apteco.ApiDataAggregator.Core.Services
     #region private methods
     private void AddMeaureToData(List<string> data, Measure measure, MeasureResult measureResult, List<DimensionResult> dimensionResults)
     {
+      //The CubeDimensionHeaders private class is used to convert an n-dimensional cube into a series of 2D tables to output.
       CubeDimensionHeaders cubeDimensionHeaders = new CubeDimensionHeaders(dimensionResults);
 
       if (measureResult.Rows.Count < 1)
@@ -116,20 +117,19 @@ namespace Apteco.ApiDataAggregator.Core.Services
       {
         data.Add(dimensionResults[0].HeaderDescriptions);
         data.Add(measureResult.Rows[0]);
+        return;
       }
-      else
+
+      for (int rowIndex = 0; rowIndex < measureResult.Rows.Count; rowIndex++)
       {
-        for (int rowIndex = 0; rowIndex < measureResult.Rows.Count; rowIndex++)
+        int dimension1Index = cubeDimensionHeaders.GetItemIndex(rowIndex, 1);
+        if (dimension1Index == 0)
         {
-          int dimension1Index = cubeDimensionHeaders.GetItemIndex(rowIndex, 1);
-          if (dimension1Index == 0)
-          {
-            data.Add("");
-            data.Add(GetSubCubeDescription(rowIndex, cubeDimensionHeaders));
-            data.Add("\t" + dimensionResults[0].HeaderDescriptions);
-          }
-          data.Add(cubeDimensionHeaders.GetDimensionHeader(1, dimension1Index) + "\t" + measureResult.Rows[rowIndex]);
+          data.Add("");
+          data.Add(GetSubCubeDescription(rowIndex, cubeDimensionHeaders));
+          data.Add("\t" + dimensionResults[0].HeaderDescriptions);
         }
+        data.Add(cubeDimensionHeaders.GetDimensionHeader(1, dimension1Index) + "\t" + measureResult.Rows[rowIndex]);
       }
     }
 
@@ -145,6 +145,7 @@ namespace Apteco.ApiDataAggregator.Core.Services
       }
     }
 
+    //Get the name of each 2D cube, by finding the points of each dimension bigger then the first 2D.
     private string GetSubCubeDescription(int rowIndex, CubeDimensionHeaders cubeDimensionHeaders)
     {
       List<string> descriptions = new List<string>();
