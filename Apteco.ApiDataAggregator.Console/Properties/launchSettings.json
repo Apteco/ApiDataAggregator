@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Apteco.ApiDataAggregator.Console": {
+      "commandName": "Project"
+    }
+  }
+}
